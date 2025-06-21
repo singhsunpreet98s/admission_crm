@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseFees;
 use Illuminate\Http\Request;
@@ -20,66 +21,87 @@ class CourseFeesController extends Controller
       $this->section = "courses.fees";
       $this->paginationLimit = config('app.pagination_limit');
    }
-   public function index($id)
+   public function index($courseId)
    {
       $section = $this->section;
-      $courseFees = CourseFees::where('course_id', $id)->select(['id', 'name', 'code'])->paginate($this->paginationLimit);
-      return View::make('admin.' . $this->section . '.' . (CustomRequest::ajax() ? 'table' : 'index'))->with(compact('section', 'courseFees'));
+      $course = Course::select(['name'])->find($courseId);
+      $courseName = $course->name;
+      $courseFees = CourseFees::where('course_id', $courseId)->with(['category:id,name'])->select(['id', 'category_id',  'amount', 'fee_head', 'period_number'])->paginate($this->paginationLimit);
+      return View::make('admin.' . $this->section . '.' . (CustomRequest::ajax() ? 'table' : 'index'))->with(compact('section', 'courseFees', 'courseId', 'courseName'));
    }
-   public function create()
+   public function create($courseId)
    {
       $section = $this->section;
-      return view("admin.$section.create")->with(compact('section'));
+      $categories = Category::get()->pluck('name', 'id');
+      return view("admin.$section.create")->with(compact('section', 'courseId', 'categories'));
    }
-   public function store(Request $request)
+   public function store(Request $request, $courseId)
    {
       $validator = Validator::make($request->all(), [
-         'name' => 'required|string',
-         'code' => 'required|string|unique:courses,code',
+         'category_id'  => 'required|exists:categories,id',
+         'gender'       => 'nullable|in:male,female,other',
+         'fee_head'     => 'required|string|max:255',
+         'amount'       => 'required|numeric|min:0',
+         'period_number' => 'required|integer|min:1',
       ]);
       if ($validator->fails()) {
          return response()->json(['errors' => $validator->errors()], 400);
       }
-      $requestData = $request->only(['name', 'code']);
-      $course = new Course();
-      $course->name = $requestData['name'];
-      $course->code = $requestData['code'];
-      $course->added_by = Auth::user()->id;
-      $course->save();
+      $requestData = $request->only(['category_id', 'gender', 'fee_head', 'amount', 'period_number']);
+      $fees = new CourseFees();
+      $fees->course_id = $courseId;
+      $fees->category_id = $requestData['category_id'];
+      $fees->gender = $requestData['gender'];
+      $fees->fee_head = $requestData['fee_head'];
+      $fees->amount = $requestData['amount'];
+      $fees->period_number = $requestData['period_number'];
+      $fees->added_by = Auth::user()->id;
+      $fees->save();
       return response()->json(['status' => 1], 201);
    }
-   public function edit($id)
+   public function edit($courseId, $id)
    {
       $section = $this->section;
-      $course = Course::select(['id', 'name', 'code'])->find($id);
-      return view("admin.$section.edit")->with(compact('course', 'section'));
+      $courseFee = CourseFees::where('course_id', $courseId)
+         ->where('id', $id)
+         ->select(['id', 'category_id',  'amount', 'fee_head', 'period_number'])
+         ->first();
+      $categories = Category::get()->pluck('name', 'id');
+      return view("admin.$section.edit")->with(compact('courseFee', 'section', 'categories', 'courseId'));
    }
    public function update(Request $request, $id)
    {
       $validator = Validator::make($request->all(), [
-         'name' => 'required|string',
-         'code' => 'required|string',
+         'category_id'  => 'required|exists:categories,id',
+         'gender'       => 'nullable|in:male,female,other',
+         'fee_head'     => 'required|string|max:255',
+         'amount'       => 'required|numeric|min:0',
+         'period_number' => 'required|integer|min:1',
       ]);
       if ($validator->fails()) {
          return response()->json(['errors' => $validator->errors()], 400);
       }
-      $requestData = $request->only(['name', 'code']);
-      $course = Course::find($id);
-      $course->name = $requestData['name'];
-      $course->code = $requestData['code'];
-      $course->save();
+      $requestData = $request->only(['category_id', 'gender', 'fee_head', 'amount', 'period_number']);
+      $fees = CourseFees::find($id);
+      $fees->category_id = $requestData['category_id'];
+      $fees->gender = $requestData['gender'];
+      $fees->fee_head = $requestData['fee_head'];
+      $fees->amount = $requestData['amount'];
+      $fees->period_number = $requestData['period_number'];
+      $fees->added_by = Auth::user()->id;
+      $fees->save();
       return response()->json(['status' => 1], 201);
    }
-   public function doDelete($id)
+   public function doDelete($courseId, $id)
    {
-      $course = Course::where('id', $id)->select(['id', 'name'])->first();
       $section = $this->section;
-      return view("admin.$section.do_delete")->with(compact('section', 'course'));
+      $courseFee = CourseFees::select(['id'])->find($id);
+      return view("admin.$section.do_delete")->with(compact('section', 'courseFee', 'courseId'));
    }
-   public function delete($id)
+   public function delete($courseId, $id)
    {
-      $course = Course::find($id);
-      $course->delete();
+      $courseFee = CourseFees::find($id);
+      $courseFee->delete();
       return response()->json(['status' => 1], 200);
    }
 }

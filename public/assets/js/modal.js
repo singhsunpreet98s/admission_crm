@@ -85,8 +85,11 @@ var $modal = {
             bodyLoader.remove($('body'));
          },
          error: function (jqXHR, textStatus, errorThrown) {
-            $modal.initEvent(modal, 'content-error');
-            handlerFailModal(jqXHR, textStatus, errorThrown);
+            //$modal.initEvent(modal, 'content-error');
+            bodyLoader.remove($('body'));
+            modal.modal('hide');
+            toastr.error(errorThrown, 'Error');
+            // handlerFailModal(jqXHR, textStatus, errorThrown);
          }
       });
    },

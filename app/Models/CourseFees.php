@@ -18,4 +18,12 @@ class CourseFees extends Model
         'period_number',
         'added_by'
     ];
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

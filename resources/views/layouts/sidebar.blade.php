@@ -2,10 +2,16 @@
    <ul class="nav">
      
     @if(Auth::user()->isAdmin())
-     <li class="nav-item {{ request()->is('admin*') ? 'active' : ''}}">
-       <a class="nav-link" href="{{route('admin.index')}}">
-         <span class="menu-title">Dashboard</span>
-         <i class="mdi mdi-view-dashboard menu-icon"></i>
+     <li class="nav-item {{ request()->is('admin/categories*') ? 'active' : ''}}">
+       <a class="nav-link" href="{{route('admin.categories.index')}}">
+         <span class="menu-title">Categories</span>
+         <i class="mdi mdi-account-file-text-outline menu-icon"></i>
+       </a>
+     </li>
+     <li class="nav-item {{ request()->is('admin/courses*') ? 'active' : ''}}">
+       <a class="nav-link" href="{{route('admin.courses.index')}}">
+         <span class="menu-title">Courses</span>
+         <i class="mdi mdi-bookshelf menu-icon"></i>
        </a>
      </li>
      @endif

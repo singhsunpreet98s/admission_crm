@@ -1,13 +1,13 @@
 @extends('layouts.modal')
 @section('title')
-<i  class="text-danger mdi mdi-delete"></i> Delete Course
+<i  class="text-danger mdi mdi-delete"></i> Delete Fees
 @endsection
 @section('content')
-<h4>Are you sure you want to delete this {{$course->name}}?</h4>
-<form method="DELETE" action="{{route("admin.$section.delete",['id'=>$course->id])}}">
+<h4>Are you sure you want to delete Fee?</h4>
+<form method="DELETE" action="{{route("admin.$section.delete",['id'=>$courseFee->id,'courseId'=>$courseId])}}">
     @csrf
     @method('DELETE')
-    <input type="hidden" name="id" value="{!!$course->id!!}" />
+    <input type="hidden" name="id" value="{!!$courseFee->id!!}" />
      </form>
 @endsection
 @section('buttons')

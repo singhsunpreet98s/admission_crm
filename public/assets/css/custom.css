@@ -1,3 +1,12 @@
 span.help-block.error.input_error_email {
    color: #eb5656;
 }
+
+.icon-action-button {
+   font-size: 20px;
+   height: 20px;
+}
+
+table tbody tr {
+   padding: 2px !important;
+}

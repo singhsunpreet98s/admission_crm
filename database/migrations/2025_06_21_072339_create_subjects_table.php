@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('merit_lists', function (Blueprint $table) {
+        Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->string('name')->nullable();
-            $table->string('res_no');
-            $table->foreignId('file_id')->constrained();
+            $table->foreignId('semester_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->boolean('is_minor')->default(false);
+            $table->boolean('is_extra')->default(false);
+            $table->foreignId('added_by')->constrained('users');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('merit_lists');
+        Schema::dropIfExists('subjects');
     }
 };

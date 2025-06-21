@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('course_id')->constrained();
-            $table->json('subjects')->nullable(); // IDs
-            $table->json('minor_subjects')->nullable();
-            $table->json('extra_subjects')->nullable();
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('course_id')->constrained('courses');
+            $table->foreignId('semester_id')->constrained('semesters');
             $table->enum('payment_status', ['unpaid', 'partial', 'paid'])->default('unpaid');
             $table->string('receipt_path')->nullable();
             $table->enum('admission_status', ['pending', 'submitted', 'admitted'])->default('pending');

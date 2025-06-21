@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');     // who paid
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');   // for which course
+            $table->foreignId('semester_id')->constrained()->onDelete('cascade'); // for which semester
             $table->decimal('amount', 10, 2);
-            $table->enum('method', ['razorpay', 'upi', 'cash', 'bank']);
+            $table->enum('method', ['razorpay', 'upi', 'cash', 'bank'])->default('razorpay');
             $table->string('razorpay_payment_id')->nullable();
             $table->enum('status', ['initiated', 'failed', 'success'])->default('initiated');
             $table->timestamp('paid_at')->nullable();

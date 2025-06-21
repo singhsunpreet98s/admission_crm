@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['student', 'staff', 'admin']);
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->string('university_reg_no')->nullable()->unique();
             $table->text('address')->nullable();
             $table->string('photo_path')->nullable();
             $table->string('signature_path')->nullable();
-            $table->foreignId('session_id')->nullable()->constrained();
+            $table->foreignId('course_id')->nullable()->constrained('courses');
         });
     }
 
@@ -29,7 +29,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'gender', 'category_id', 'university_reg_no', 'address', 'photo_path', 'signature_path', 'session_id']);
+            //
         });
     }
 };

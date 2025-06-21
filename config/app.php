@@ -53,6 +53,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'pagination_limit' => env('PAGINATION_LIMIT', 10),
 
     /*
     |--------------------------------------------------------------------------

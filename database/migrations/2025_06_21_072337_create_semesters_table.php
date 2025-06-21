@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('semesters', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id')->constrained();
-            $table->string('name');
-            $table->integer('number');
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
+            $table->string('name'); // e.g., "Semester 1"
+            $table->integer('number'); // for ordering or programmatic use
+            $table->foreignId('added_by')->constrained('users'); // who added the semester
             $table->timestamps();
         });
     }

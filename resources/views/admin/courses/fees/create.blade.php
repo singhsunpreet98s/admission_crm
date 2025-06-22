@@ -18,6 +18,17 @@
         @endforeach
       </select>
        </div>
+       <div class="form-group">
+         <label for="semester_id">Semester</label>
+      <select class="form-select" name="semester_id" id="semester_id" required>
+        <option value="">-- Select Category --</option>
+        @foreach ($semesters as $key=>$value)
+          <option value="{{$key}}" >
+            {{ $value }}
+          </option>
+        @endforeach
+      </select>
+       </div>
       <div class="form-group">
         <label for="gender">Gender</label>
         <select class="form-select" name="gender" id="gender">

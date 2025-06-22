@@ -2,6 +2,7 @@
    <thead class="sticky-top">
      <tr>
        <th> Category </th>
+       <th> Semester </th>
        <th> Fee Head </th>
        <th> Amount </th>
        <th> Period Number </th>
@@ -14,6 +15,7 @@
          @foreach($courseFees as $courseFee)
          <tr>
             <td>{!!$courseFee->category->name!!}</td>
+            <td>{!!$courseFee->semester->name!!}</td>
             <td>
                {!!$courseFee->fee_head!!}
             </td>

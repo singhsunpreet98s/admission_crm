@@ -16,4 +16,12 @@ class Subject extends Model
         'is_extra',
         'added_by',
     ];
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
+    }
 }

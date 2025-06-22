@@ -15,7 +15,10 @@
          <label for="code">Code</label>
          <input type="text" class="form-control" name="code" id="name" placeholder="Enter Course Code">
        </div>
-      
+       <div class="form-group">
+         <label for="semester_count">No of Semesters</label>
+         <input type="number" class="form-control" name="semester_count" id="semester_count" placeholder="No of Semstesters">
+       </div>
      </form>
    </div>
  </div>

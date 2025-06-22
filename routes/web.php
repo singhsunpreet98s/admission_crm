@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AcademicSessionController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\CourseFeesController;
 use App\Http\Controllers\Admin\CoursesController;
+use App\Http\Controllers\Admin\SubjectsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +44,25 @@ Route::middleware('admin')->group(function () {
     Route::patch('/admin/categories/update/{id}', [CategoriesController::class, 'update'])->name('admin.categories.update');
     Route::get('/admin/categories/do_delete/{id}', [CategoriesController::class, 'doDelete'])->name('admin.categories.doDelete');
     Route::delete('/admin/categories/delete/{id}', [CategoriesController::class, 'delete'])->name('admin.categories.delete');
+
+    // Acadamic Session
+    Route::get('/admin/academic_session', [AcademicSessionController::class, 'index'])->name('admin.academicSession.index');
+    Route::get('/admin/academic_session/create', [AcademicSessionController::class, 'create'])->name('admin.academicSession.create');
+    Route::post('/admin/academic_session/store', [AcademicSessionController::class, 'store'])->name('admin.academicSession.store');
+    Route::get('/admin/academic_session/edit/{id}', [AcademicSessionController::class, 'edit'])->name('admin.academicSession.edit');
+    Route::patch('/admin/academic_session/update/{id}', [AcademicSessionController::class, 'update'])->name('admin.academicSession.update');
+    Route::get('/admin/academic_session/do_delete/{id}', [AcademicSessionController::class, 'doDelete'])->name('admin.academicSession.doDelete');
+    Route::delete('/admin/academic_session/delete/{id}', [AcademicSessionController::class, 'delete'])->name('admin.academicSession.delete');
+
+
+    // Subjects
+    Route::get('/admin/subjects', [SubjectsController::class, 'index'])->name('admin.subjects.index');
+    Route::get('/admin/subjects/create', [SubjectsController::class, 'create'])->name('admin.subjects.create');
+    Route::post('/admin/subjects/store', [SubjectsController::class, 'store'])->name('admin.subjects.store');
+    Route::get('/admin/subjects/edit/{id}', [SubjectsController::class, 'edit'])->name('admin.subjects.edit');
+    Route::patch('/admin/subjects/update/{id}', [SubjectsController::class, 'update'])->name('admin.subjects.update');
+    Route::get('/admin/subjects/do_delete/{id}', [SubjectsController::class, 'doDelete'])->name('admin.subjects.doDelete');
+    Route::delete('/admin/subjects/delete/{id}', [SubjectsController::class, 'delete'])->name('admin.subjects.delete');
 
     // Courses
     Route::get('/admin/courses/{courseId}/fees', [CourseFeesController::class, 'index'])->name('admin.courses.fees.index');

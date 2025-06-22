@@ -1,17 +1,30 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
+<nav class="sidebar sidebar-offcanvas bg-dark" id="sidebar">
    <ul class="nav">
      
     @if(Auth::user()->isAdmin())
-     <li class="nav-item {{ request()->is('admin/categories*') ? 'active' : ''}}">
+     <li class="nav-item {{ request()->is('admin/categories*') ? 'bg-primary active' : ''}}">
        <a class="nav-link" href="{{route('admin.categories.index')}}">
-         <span class="menu-title">Categories</span>
+         <span class="menu-title text-light">Categories</span>
          <i class="mdi mdi-account-file-text-outline menu-icon"></i>
        </a>
      </li>
-     <li class="nav-item {{ request()->is('admin/courses*') ? 'active' : ''}}">
+     <li class="nav-item {{ request()->is('admin/courses*') ? 'bg-primary active' : ''}}">
        <a class="nav-link" href="{{route('admin.courses.index')}}">
-         <span class="menu-title">Courses</span>
+         <span class="menu-title text-light">Courses</span>
          <i class="mdi mdi-bookshelf menu-icon"></i>
+       </a>
+     </li>
+       <li class="nav-item {{ request()->is('admin/academic_session*') ? 'bg-primary active' : ''}}">
+       <a class="nav-link" href="{{route('admin.academicSession.index')}}">
+         <span class="menu-title text-light">Sessions</span>
+         <i class="mdi mdi-school-outline menu-icon"></i>
+       </a>
+     </li>
+     </li>
+       <li class="nav-item {{ request()->is('admin/subjects*') ? 'bg-primary active' : ''}}">
+       <a class="nav-link" href="{{route('admin.subjects.index')}}">
+         <span class="menu-title text-light">Subjects</span>
+         <i class="mdi mdi-book-open-outline menu-icon"></i>
        </a>
      </li>
      @endif

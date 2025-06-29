@@ -10,20 +10,16 @@
     
      <ul class="navbar-nav navbar-nav-right">
        
-       <li class="nav-item d-none d-lg-block full-screen-link">
-         <a class="nav-link">
-           <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
-         </a>
-       </li>
+      
       
        <li class="nav-item nav-profile dropdown">
          <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-           <div class="nav-profile-img" style="background-color: red;border-radius:20px;display:flex;justify-content:center;allign">
+           <div class="nav-profile-img" style="background-color: rgb(80, 175, 80);border-radius:20px;display:flex;justify-content:center;allign">
              <span style="font-size: 18px;color:white;font-weight:800;text-transform: capitalize;">{{Auth::user()->name[0]}}</span>
              {{-- <span class="availability-status online"></span> --}}
            </div>
            <div class="nav-profile-text " >
-             <p class="mb-1 text-black">{{Auth::user()->name}}</p>
+             <p class="mb-1 text-light">{{Auth::user()->name}}</p>
            </div>
          </a>
          <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">

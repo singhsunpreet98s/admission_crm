@@ -35,20 +35,23 @@ class CoursesController extends Controller
    }
    public function store(Request $request)
    {
+
       $validator = Validator::make($request->all(), [
          'name' => 'required|string',
          'code' => 'required|string|unique:courses,code',
+         'program' => 'required|string',
          'semester_count' => 'required|int|min:1|max:10'
       ]);
       if ($validator->fails()) {
          return response()->json(['errors' => $validator->errors()], 400);
       }
-      $requestData = $request->only(['name', 'code', 'semester_count']);
+      $requestData = $request->only(['name', 'code', 'semester_count', 'program']);
       try {
          beginTransaction();
          $course = new Course();
          $course->name = $requestData['name'];
          $course->code = $requestData['code'];
+         $course->program_name = $requestData['program'];
          $course->semesters_count = $requestData['semester_count'];
          $course->added_by = Auth::user()->id;
          $course->save();
@@ -79,7 +82,7 @@ class CoursesController extends Controller
    public function edit($id)
    {
       $section = $this->section;
-      $course = Course::select(['id', 'name', 'code'])->find($id);
+      $course = Course::select(['id', 'name', 'code', 'program_name'])->find($id);
       return view("admin.$section.edit")->with(compact('course', 'section'));
    }
    public function update(Request $request, $id)
@@ -87,15 +90,30 @@ class CoursesController extends Controller
       $validator = Validator::make($request->all(), [
          'name' => 'required|string',
          'code' => 'required|string',
+         'program' => 'required|string',
       ]);
       if ($validator->fails()) {
          return response()->json(['errors' => $validator->errors()], 400);
       }
-      $requestData = $request->only(['name', 'code']);
-      $course = Course::find($id);
-      $course->name = $requestData['name'];
-      $course->code = $requestData['code'];
-      $course->save();
+      $requestData = $request->only(['name', 'code', 'program']);
+      try {
+         $course = Course::find($id);
+         $course->name = $requestData['name'];
+         $course->code = $requestData['code'];
+         $course->program_name = $requestData['program'];
+         $course->save();
+      } catch (Exception $ex) {
+         logError(
+            "courses",
+            $ex->getMessage(),
+            [
+               'controller' => 'coures',
+               'method' => 'store',
+               'stack_trace' => $ex->getTraceAsString()
+            ]
+         );
+         throw new Exception("Unable to create course");
+      }
       return response()->json(['status' => 1], 201);
    }
    public function doDelete($id)

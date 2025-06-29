@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\CourseFeesController;
 use App\Http\Controllers\Admin\CoursesController;
+use App\Http\Controllers\Admin\MeritListController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -22,57 +24,80 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::prefix('students')->name('students.')->group(function () {
+    Route::get('check_application_status', [StudentController::class, 'checkApplicationStatus'])->name('checkApplicationStatus');
+    Route::post('verify_application_status', [StudentController::class, 'verifyApplicationStatus'])->name('verifyApplicationStatus');
+});
+Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 
-Route::middleware('admin')->group(function () {
     // Dashboard
-    Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('index', [AdminController::class, 'index'])->name('index');
 
     // Courses
-    Route::get('/admin/courses', [CoursesController::class, 'index'])->name('admin.courses.index');
-    Route::get('/admin/courses/create', [CoursesController::class, 'create'])->name('admin.courses.create');
-    Route::post('/admin/courses/store', [CoursesController::class, 'store'])->name('admin.courses.store');
-    Route::get('/admin/courses/edit/{id}', [CoursesController::class, 'edit'])->name('admin.courses.edit');
-    Route::patch('/admin/courses/update/{id}', [CoursesController::class, 'update'])->name('admin.courses.update');
-    Route::get('/admin/courses/do_delete/{id}', [CoursesController::class, 'doDelete'])->name('admin.courses.doDelete');
-    Route::delete('/admin/courses/delete/{id}', [CoursesController::class, 'delete'])->name('admin.courses.delete');
+    Route::prefix('courses')->name('courses.')->group(function () {
+        Route::get('/', [CoursesController::class, 'index'])->name('index');
+        Route::get('create', [CoursesController::class, 'create'])->name('create');
+        Route::post('store', [CoursesController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [CoursesController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [CoursesController::class, 'update'])->name('update');
+        Route::get('do_delete/{id}', [CoursesController::class, 'doDelete'])->name('doDelete');
+        Route::delete('delete/{id}', [CoursesController::class, 'delete'])->name('delete');
+
+        // Nested: Course Fees
+        Route::prefix('{courseId}/fees')->name('fees.')->group(function () {
+            Route::get('/', [CourseFeesController::class, 'index'])->name('index');
+            Route::get('create', [CourseFeesController::class, 'create'])->name('create');
+            Route::post('store', [CourseFeesController::class, 'store'])->name('store');
+            Route::get('edit/{id}', [CourseFeesController::class, 'edit'])->name('edit');
+            Route::patch('update/{id}', [CourseFeesController::class, 'update'])->name('update');
+            Route::get('do_delete/{id}', [CourseFeesController::class, 'doDelete'])->name('doDelete');
+            Route::delete('delete/{id}', [CourseFeesController::class, 'delete'])->name('delete');
+        });
+    });
 
     // Categories
-    Route::get('/admin/categories', [CategoriesController::class, 'index'])->name('admin.categories.index');
-    Route::get('/admin/categories/create', [CategoriesController::class, 'create'])->name('admin.categories.create');
-    Route::post('/admin/categories/store', [CategoriesController::class, 'store'])->name('admin.categories.store');
-    Route::get('/admin/categories/edit/{id}', [CategoriesController::class, 'edit'])->name('admin.categories.edit');
-    Route::patch('/admin/categories/update/{id}', [CategoriesController::class, 'update'])->name('admin.categories.update');
-    Route::get('/admin/categories/do_delete/{id}', [CategoriesController::class, 'doDelete'])->name('admin.categories.doDelete');
-    Route::delete('/admin/categories/delete/{id}', [CategoriesController::class, 'delete'])->name('admin.categories.delete');
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoriesController::class, 'index'])->name('index');
+        Route::get('create', [CategoriesController::class, 'create'])->name('create');
+        Route::post('store', [CategoriesController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [CategoriesController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [CategoriesController::class, 'update'])->name('update');
+        Route::get('do_delete/{id}', [CategoriesController::class, 'doDelete'])->name('doDelete');
+        Route::delete('delete/{id}', [CategoriesController::class, 'delete'])->name('delete');
+    });
 
-    // Acadamic Session
-    Route::get('/admin/academic_session', [AcademicSessionController::class, 'index'])->name('admin.academicSession.index');
-    Route::get('/admin/academic_session/create', [AcademicSessionController::class, 'create'])->name('admin.academicSession.create');
-    Route::post('/admin/academic_session/store', [AcademicSessionController::class, 'store'])->name('admin.academicSession.store');
-    Route::get('/admin/academic_session/edit/{id}', [AcademicSessionController::class, 'edit'])->name('admin.academicSession.edit');
-    Route::patch('/admin/academic_session/update/{id}', [AcademicSessionController::class, 'update'])->name('admin.academicSession.update');
-    Route::get('/admin/academic_session/do_delete/{id}', [AcademicSessionController::class, 'doDelete'])->name('admin.academicSession.doDelete');
-    Route::delete('/admin/academic_session/delete/{id}', [AcademicSessionController::class, 'delete'])->name('admin.academicSession.delete');
-
+    // Academic Session
+    // Route::prefix('academic_session')->name('academicSession.')->group(function () {
+    //     Route::get('/', [AcademicSessionController::class, 'index'])->name('index');
+    //     Route::get('create', [AcademicSessionController::class, 'create'])->name('create');
+    //     Route::post('store', [AcademicSessionController::class, 'store'])->name('store');
+    //     Route::get('edit/{id}', [AcademicSessionController::class, 'edit'])->name('edit');
+    //     Route::patch('update/{id}', [AcademicSessionController::class, 'update'])->name('update');
+    //     Route::get('do_delete/{id}', [AcademicSessionController::class, 'doDelete'])->name('doDelete');
+    //     Route::delete('delete/{id}', [AcademicSessionController::class, 'delete'])->name('delete');
+    // });
 
     // Subjects
-    Route::get('/admin/subjects', [SubjectsController::class, 'index'])->name('admin.subjects.index');
-    Route::get('/admin/subjects/create', [SubjectsController::class, 'create'])->name('admin.subjects.create');
-    Route::post('/admin/subjects/store', [SubjectsController::class, 'store'])->name('admin.subjects.store');
-    Route::get('/admin/subjects/edit/{id}', [SubjectsController::class, 'edit'])->name('admin.subjects.edit');
-    Route::patch('/admin/subjects/update/{id}', [SubjectsController::class, 'update'])->name('admin.subjects.update');
-    Route::get('/admin/subjects/do_delete/{id}', [SubjectsController::class, 'doDelete'])->name('admin.subjects.doDelete');
-    Route::delete('/admin/subjects/delete/{id}', [SubjectsController::class, 'delete'])->name('admin.subjects.delete');
+    Route::prefix('subjects')->name('subjects.')->group(function () {
+        Route::get('/', [SubjectsController::class, 'index'])->name('index');
+        Route::get('create', [SubjectsController::class, 'create'])->name('create');
+        Route::post('store', [SubjectsController::class, 'store'])->name('store');
+        Route::get('edit/{id}', [SubjectsController::class, 'edit'])->name('edit');
+        Route::patch('update/{id}', [SubjectsController::class, 'update'])->name('update');
+        Route::get('do_delete/{id}', [SubjectsController::class, 'doDelete'])->name('doDelete');
+        Route::delete('delete/{id}', [SubjectsController::class, 'delete'])->name('delete');
+    });
 
-    // Courses
-    Route::get('/admin/courses/{courseId}/fees', [CourseFeesController::class, 'index'])->name('admin.courses.fees.index');
-    Route::get('/admin/courses/{courseId}/fees/create', [CourseFeesController::class, 'create'])->name('admin.courses.fees.create');
-    Route::post('/admin/courses{courseId}/fees/store', [CourseFeesController::class, 'store'])->name('admin.courses.fees.store');
-    Route::get('/admin/courses/{courseId}/fees/edit/{id}', [CourseFeesController::class, 'edit'])->name('admin.courses.fees.edit');
-    Route::patch('/admin/courses/{courseId}/fees/update/{id}', [CourseFeesController::class, 'update'])->name('admin.courses.fees.update');
-    Route::get('/admin/courses/{courseId}/fees/do_delete/{id}', [CourseFeesController::class, 'doDelete'])->name('admin.courses.fees.doDelete');
-    Route::delete('/admin/courses/{courseId}/fees/delete/{id}', [CourseFeesController::class, 'delete'])->name('admin.courses.fees.delete');
+    // MeritList 
+    Route::prefix('merit_list')->name('meritList.')->group(function () {
+        Route::get('/', [MeritListController::class, 'index'])->name('index');
+        Route::get('create', [MeritListController::class, 'create'])->name('create');
+        Route::post('store', [MeritListController::class, 'store'])->name('store');
+        Route::get('do_delete/{id}', [MeritListController::class, 'doDelete'])->name('doDelete');
+        Route::delete('delete/{id}', [MeritListController::class, 'delete'])->name('delete');
+    });
 });
+
 
 
 Route::get('/sign_out', [ProfileController::class, 'signOut'])->name('signOut');

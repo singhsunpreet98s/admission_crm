@@ -58,8 +58,7 @@
         <script src="{{ asset('assets/js/quill.js') }}"></script>
         <script src="{{ asset('assets/vendors/select2/select2.min.js') }}"></script>
         <script src="{{asset('assets/js/toaster.min.js')}}"></script>
-        @yield('scripts')
-        <script>
+         <script>
             $(document).ready(function () {
                 // Configure toastr options
                 toastr.options = {
@@ -82,6 +81,10 @@
                 
             });
         </script>
+         <script src="{{asset('assets/js/custom.js')}}"></script>
+        @yield('scripts')
+       
+        
         
     </body>
 </html>

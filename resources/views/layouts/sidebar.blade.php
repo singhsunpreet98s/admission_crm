@@ -13,18 +13,25 @@
          <span class="menu-title text-light">Courses</span>
          <i class="mdi mdi-bookshelf menu-icon"></i>
        </a>
-     </li>
+     {{-- </li>
        <li class="nav-item {{ request()->is('admin/academic_session*') ? 'bg-primary active' : ''}}">
        <a class="nav-link" href="{{route('admin.academicSession.index')}}">
          <span class="menu-title text-light">Sessions</span>
          <i class="mdi mdi-school-outline menu-icon"></i>
        </a>
-     </li>
+     </li> --}}
      </li>
        <li class="nav-item {{ request()->is('admin/subjects*') ? 'bg-primary active' : ''}}">
        <a class="nav-link" href="{{route('admin.subjects.index')}}">
          <span class="menu-title text-light">Subjects</span>
          <i class="mdi mdi-book-open-outline menu-icon"></i>
+       </a>
+     </li>
+     </li>
+       <li class="nav-item {{ request()->is('admin/merit_list*') ? 'bg-primary active' : ''}}">
+       <a class="nav-link" href="{{route('admin.meritList.index')}}">
+         <span class="menu-title text-light">Merit List</span>
+         <i class="mdi mdi-file-document-outline menu-icon"></i>
        </a>
      </li>
      @endif

@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('employee', [
             \App\Http\Middleware\EmployeeMiddleware::class,
         ]);
+        $middleware->group('employee', [
+            \App\Http\Middleware\TabSwitch::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

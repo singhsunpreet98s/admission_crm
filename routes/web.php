@@ -25,8 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::prefix('students')->name('students.')->group(function () {
+    Route::get('demo', [StudentController::class, 'demo'])->name('demo');
     Route::get('check_application_status', [StudentController::class, 'checkApplicationStatus'])->name('checkApplicationStatus');
     Route::post('verify_application_status', [StudentController::class, 'verifyApplicationStatus'])->name('verifyApplicationStatus');
+    Route::post('admission_form', [StudentController::class, 'fillAdmissionForm'])->name('fillAdmissionForm');
+    Route::post('save_form', [StudentController::class, 'saveForm'])->name('saveForm');
 });
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 

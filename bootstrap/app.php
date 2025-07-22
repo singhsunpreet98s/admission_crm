@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('employee', [
             \App\Http\Middleware\TabSwitch::class,
         ]);
+        $middleware->group('cors', [
+            \App\Http\Middleware\CorsMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

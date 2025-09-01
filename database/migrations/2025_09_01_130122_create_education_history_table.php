@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('roll_no');
             $table->string('roll_code');
             $table->string('passing_year');
+            $table->string('name');
+            $table->string('title');
             $table->string('board')->nullable();
             $table->string('stream')->nullable();
             $table->double('total_marks');

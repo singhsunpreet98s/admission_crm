@@ -21,9 +21,10 @@ return new class extends Migration
             $table->bigInteger('user_id')->nullable();
             $table->string('religion')->nullable();
             $table->string('aadhar_no')->nullable();
-            $table->boolean('hasEWS')->nullable()->default(false);
+            $table->boolean('has_ews')->nullable()->default(false);
             $table->string('disabled_category')->nullable();
             $table->string('mobile')->nullable();
+            $table->string('state')->nullable();
             $table->string('address')->nullable();
             $table->string('district')->nullable();
             $table->string('pincode')->nullable();

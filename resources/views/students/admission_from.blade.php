@@ -1,7 +1,7 @@
 @extends('layouts.student')
 @section('content')
 <div class="container-fluid" style="border:1px solid #dc3545;padding:10px;border-radius:5px">
-  <form id="{{$section}}_admission_form" method="POST" action="{{route("$section.saveForm")}}">
+  <form id="{{$section}}_admission_form" method="POST" enctype="multipart/form-data" action="/students/save_form">
     @csrf
    <div class=" text-danger text-center">
       <h3 class="mb-0">Please fill your Admission Form</h3>
@@ -9,13 +9,14 @@
     <div class="alert alert-danger text-center fw-bold mt-4">
         अभ्यर्थी अपने नामांकन हेतु आवेदन पत्र को स्वयं भरें अथवा साइबर कैफ़े से भरवाने की स्थिति में स्वयं वहां उपस्थित रहें । आवेदन पत्र में किसी भी त्रुटि के लिए अभ्यर्थी स्वयं जिम्मेदार होंगे ।
       </div>
-   
+   <input type="hidden" name="merit_list_id" value="{{$registration->id}}" />
+   <input type="hidden" name="merit_list_student_id" value="{{$meritListFile->id}}" />
     @include("$section.admission_form_profile_details")
     @include("$section.admission_form_contact_details")
     @include("$section.admission_form_applied_details")
     @include("$section.admission_form_acadmic_details")
-    @include("$section.admission_form_bank_details")
-    @include("$section.admission_form_declaration")
+     @include("$section.admission_form_bank_details")
+    @include("$section.admission_form_declaration")  
 
   <div class="container mb-4 mt-4">
     <button type="submit" class="btn btn-danger w-100">

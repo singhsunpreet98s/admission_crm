@@ -44,7 +44,16 @@
 
             <div class="col-md-3 mb-3">
                <label for="category" class="form-label">Category (श्रेणी) *</label>
-               <input type="text" class="form-control" id="category" name="category" value="{!!$registration->category!!}" readonly required>
+                <select class="form-select" id="category" name="category" required>
+                  <option value="">Select Category</option>
+                  @foreach($categories as $key=>$name)
+                     @if($name==$registration->category)
+                        <option value="{{$key}}" selected> {!!$name!!}</option>
+                     @else
+                     <option value="{{$key}}"> {!!$name!!}</option>
+                     @endif
+                  @endforeach
+               </select>
                @if($registration->category!= "UR")
                <label class="form-label mt-2">Upload Category Certificate</label>
                <input type="file" onchange="verifySize(this,100)" class="form-control" name="category_certificate" accept=".pdf,.jpg,.jpeg,.png" required>

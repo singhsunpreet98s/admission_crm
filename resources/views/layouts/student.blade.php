@@ -91,12 +91,16 @@
         <i class="bi bi-mortarboard-fill me-2"></i> ADMISSION PORTAL
       </a>
       <div class="ms-auto d-flex">
+        @if(Auth::user())
+        {{Auth::user()->email}}
+        @else
         <a class="btn btn-outline-danger me-2" href="/login">
           <i class="bi bi-box-arrow-in-right me-1"></i> Login
         </a>
         <a class="btn btn-danger" href="#">
           <i class="bi bi-person-plus-fill me-1"></i> Register
         </a>
+        @endif
       </div>
     </div>
   </nav>

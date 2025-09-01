@@ -8,12 +8,14 @@ use App\Http\Controllers\Admin\CoursesController;
 use App\Http\Controllers\Admin\MeritListController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectsController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/demo', [DemoController::class, 'demo']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -30,6 +32,11 @@ Route::prefix('students')->name('students.')->group(function () {
     Route::post('verify_application_status', [StudentController::class, 'verifyApplicationStatus'])->name('verifyApplicationStatus');
     Route::post('admission_form', [StudentController::class, 'fillAdmissionForm'])->name('fillAdmissionForm');
     Route::post('save_form', [StudentController::class, 'saveForm'])->name('saveForm');
+    Route::post('/upload-photo-signature', [StudentController::class, 'uploadPhotoSignature'])
+        ->name('uploadPhotoSignature');
+});
+Route::prefix('students')->name('students.')->group(function () {
+    Route::get('payment', [StudentController::class, 'payment'])->name('payment');
 });
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 

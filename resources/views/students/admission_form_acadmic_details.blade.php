@@ -11,7 +11,7 @@
           <label for="PassYear10" class="form-label"><small>Passing Year (उत्तीर्ण वर्ष) *</small></label>
           <select class="form-select" name="PassYear10" id="PassYear10" required>
             <option value="">Select</option>
-            @foreach($last15years as $year)
+            @foreach($data['last_15_years'] as $year)
               <option value="{!!$year!!}">{!!$year!!}</option>
              @endforeach
             <!-- Add your year options here -->
@@ -21,7 +21,7 @@
           <label for="Board10" class="form-label">10<sup>th</sup> Board (10<sup>th</sup> बोर्ड) *</label>
           <select class="form-select" name="Board10" id="Board10" required>
             <option value="">Select an option</option>
-            @foreach($educationBoards as $key =>$name)
+            @foreach($data['education_boards'] as $key =>$name)
               <option value="{!!$key!!}">{!!$name!!}</option>
              @endforeach
             <!-- Add your board options here -->
@@ -59,7 +59,7 @@
           <label for="PassYear12" class="form-label"><small>Passing Year (उत्तीर्ण वर्ष) *</small></label>
           <select class="form-select" name="PassYear12" id="PassYear12" required>
             <option value="">Select</option>
-            @foreach($last15years as $year)
+            @foreach($data['last_15_years'] as $year)
               <option value="{!!$year!!}">{!!$year!!}</option>
             @endforeach
           </select>
@@ -68,7 +68,7 @@
           <label for="Board12" class="form-label">Intermediate Board *</label>
           <select class="form-select" name="Board12" id="Board12" required>
             <option value="">Select an option</option>
-            @foreach($educationBoards as $key =>$name)
+            @foreach($data['education_boards'] as $key =>$name)
               <option value="{!!$key!!}">{!!$name!!}</option>
              @endforeach
           </select>

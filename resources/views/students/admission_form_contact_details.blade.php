@@ -82,7 +82,7 @@
 
         <div class="col-md-6 mb-3">
           <label for="EmailID" class="form-label">Email (ईमेल आईडी) *</label>
-          <input type="email" class="form-control" name="email" id="EmailID" required placeholder="Email (ईमेल आईडी)">
+          <input type="email" class="form-control" name="email" id="EmailID" value="{!!$data['email']!!}" required placeholder="Email (ईमेल आईडी)">
         </div>
       </div>
 

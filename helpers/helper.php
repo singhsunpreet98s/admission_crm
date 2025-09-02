@@ -156,3 +156,7 @@ function getIndianEducationBoards()
       'WBBSE' => 'West Bengal Board of Secondary Education'
    ];
 }
+function calculateTax($amount)
+{
+   return (18 * $amount) / 100;
+}

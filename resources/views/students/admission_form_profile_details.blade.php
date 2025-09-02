@@ -9,7 +9,6 @@
 
          <div class="card-body">
             <!-- Hidden Fields -->
-            <input type="hidden" name="ureg_no" value="{!!$registration->res_no!!}">
             <input type="hidden" name="list_type" value="4TH LIST">
             <input type="hidden" name="session_yr" value="2024-28">
             <input type="hidden" name="quota_type" value="">
@@ -17,17 +16,17 @@
             <!-- Student Info -->
             <div class="mb-3">
             <label for="student_name" class="form-label">Student Name (अभ्यर्थी का नाम) *</label>
-            <input type="text" class="form-control" id="student_name" name="student_name" value="{!!$registration->student_name!!}" readonly required>
+            <input type="text" class="form-control" id="student_name" name="student_name" value="{!!$data['student_name']!!}" readonly required>
             </div>
 
             <div class="row">
             <div class="col-md-6 mb-3">
                <label for="father_name" class="form-label">Father's Name (पिता का नाम) *</label>
-               <input type="text" class="form-control" id="father_name" name="father_name" value="{!!$registration->fathers_name!!}"  required readonly>
+               <input type="text" class="form-control" id="father_name" name="fathers_name" value="{!!$data['fathers_name']!!}"  required readonly>
             </div>
             <div class="col-md-6 mb-3">
                <label for="mother_name" class="form-label">Mother's Name (माता का नाम) *</label>
-               <input type="text" class="form-control" id="mother_name" name="mother_name" required>
+               <input type="text" class="form-control" id="mother_name" name="mothers_name" required>
             </div>
             </div>
 
@@ -39,22 +38,18 @@
 
             <div class="col-md-3 mb-3">
                <label for="gender" class="form-label">Gender (लिंग) *</label>
-               <input type="text" class="form-control" id="gender" name="gender" value="{!!$registration->gender!!}" readonly required>
+               <input type="text" class="form-control" id="gender" name="gender" value="{!!$data['gender']!!}" readonly required>
             </div>
 
             <div class="col-md-3 mb-3">
                <label for="category" class="form-label">Category (श्रेणी) *</label>
                 <select class="form-select" id="category" name="category" required>
                   <option value="">Select Category</option>
-                  @foreach($categories as $key=>$name)
-                     @if($name==$registration->category)
-                        <option value="{{$key}}" selected> {!!$name!!}</option>
-                     @else
+                  @foreach($data['categories'] as $key=>$name)
                      <option value="{{$key}}"> {!!$name!!}</option>
-                     @endif
                   @endforeach
                </select>
-               @if($registration->category!= "UR")
+               @if($data['student_category'] !== 'UR')
                <label class="form-label mt-2">Upload Category Certificate</label>
                <input type="file" onchange="verifySize(this,100)" class="form-control" name="category_certificate" accept=".pdf,.jpg,.jpeg,.png" required>
                @endif

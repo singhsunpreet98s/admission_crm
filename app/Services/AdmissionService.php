@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Admission;
 use App\Models\BankDetails;
+use App\Models\CourseFees;
 use App\Models\EducationHistory;
 use App\Models\StudentAcadmicDetails;
 use App\Models\StudentAcadmicDocuments;
@@ -18,6 +19,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Exception\NotFoundException;
 use Intervention\Image\Facades\Image;
 use Psy\Command\HistoryCommand;
 
@@ -126,29 +128,32 @@ class AdmissionService
       $history->marks_obtained = $data['MarksObt12'];
       return $history;
    }
+
    protected function processAdmission(array $data, User $user)
    {
+      $courseFees = CourseFees::where('semester_id', $data['semester_id'])->first();
+      if (empty($courseFees)) throw new NotFoundException("Course Fees not added");
+      $fees = $courseFees->amount;
+      if ($data['gender'] !== 'female') {
+         $fees = $fees + 100;
+      }
       $admission = new Admission();
       $admission->user_id = $user->id;
       $admission->created_by = $user->id;
       $admission->course_id = $data['course_id'];
-      $admission->semester_id  = $data['course_id'];
-      $admission->major_subject = $data['course_id'];
-      $admission->minor_subject = $data['course_id'];
-      $admission->minor_subject = $data['course_id'];
-      $admission->idc = $data['course_id'];
-      $admission->aec = $data['course_id'];
-      $admission->sec = $data['course_id'];
-      $admission->vac = $data['course_id'];
-      $admission->program = $data['course_id'];
-      $admission->file_id = $data['course_id'];
-      $admission->file_student_id = $data['course_id'];
-      $admission->reg_no = $data['reg_no'];
-      $admission->acadmic_session_id = $data['reg_no'];
-      $admission->fees = $data['reg_no'];
-      $admission->tax = $data['reg_no'];
-      $admission->total_amount = $data['reg_no'];
-      $admission->application_id = $data['reg_no'];
+      $admission->semester_id  = $data['semester_id'];
+      $admission->major_subject = $data['major_subject_id'];
+      $admission->minor_subject = $data['minor_subject_id'];
+      $admission->idc = $data['idc'];
+      $admission->aec = $data['aec'];
+      $admission->sec = $data['sec'];
+      $admission->vac = $data['vac'];
+      $admission->program = $data['program_name'];
+      $admission->file_id = $data['merit_list_id'];
+      $admission->file_student_id = $data['merit_list_student_id'];
+      $admission->fees = $fees;
+      $admission->tax = calculateTax($fees);
+      $admission->total_amount = $fees + $admission->tax;
       return $admission;
    }
    public function storeAdmission(array $data): array

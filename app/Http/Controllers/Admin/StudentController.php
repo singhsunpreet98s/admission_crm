@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\MeritListFile;
 use App\Models\MeritListStudent;
 use App\Services\AdmissionService;
+use App\Services\StudentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request as CustomRequest;
@@ -20,11 +21,13 @@ class StudentController extends Controller
    protected string $section;
    protected int $paginationLimit;
    protected AdmissionService $admissionService;
-   public function __construct(AdmissionService $admissionService)
+   protected StudentService $studentService;
+   public function __construct(AdmissionService $admissionService, StudentService $studentService)
    {
       $this->section = "students";
       $this->paginationLimit = config('app.pagination_limit');
       $this->admissionService = $admissionService;
+      $this->studentService = $studentService;
    }
    public function index()
    {
@@ -77,15 +80,10 @@ class StudentController extends Controller
             'res_no.exists' => 'You are not alloted for this college.',
          ]
       );
+
       $section = $this->section;
-      $registration = MeritListStudent::where('res_no', $request->get('res_no'))
-         ->select(['id', 'major_subjects', 'minor_subjects', 'mil', 'majorsec_subjects', 'vac', 'res_no', 'idc', 'student_name', 'fathers_name', 'domincile', 'college_name', 'file_id', 'percentage', 'category', 'gender'])
-         ->first();
-      $meritListFile = MeritListFile::where('id', $registration->id)->with(['course', 'semester'])->first();
-      $last15years = getLast15Years($meritListFile->session_start);
-      $categories = Category::pluck("name", "id");
-      $educationBoards = getIndianEducationBoards();
-      return view("$section.admission_from")->with(compact('section', 'registration', 'meritListFile', 'last15years', 'educationBoards', 'categories'));
+      $data = $this->studentService->getStudentFormData($request->get('res_no'));
+      return view("$section.admission_from")->with(compact('section', 'data'));
    }
    public function saveForm(Request  $request)
    {

@@ -9,8 +9,9 @@
     <div class="alert alert-danger text-center fw-bold mt-4">
         अभ्यर्थी अपने नामांकन हेतु आवेदन पत्र को स्वयं भरें अथवा साइबर कैफ़े से भरवाने की स्थिति में स्वयं वहां उपस्थित रहें । आवेदन पत्र में किसी भी त्रुटि के लिए अभ्यर्थी स्वयं जिम्मेदार होंगे ।
       </div>
-   <input type="hidden" name="merit_list_id" value="{{$registration->id}}" />
-   <input type="hidden" name="merit_list_student_id" value="{{$meritListFile->id}}" />
+      <input type="hidden" name="semester_id" value="{{$data['semester']->id}}" />
+   <input type="hidden" name="merit_list_id" value="{{$data['merit_list_id']}}" />
+   <input type="hidden" name="merit_list_student_id" value="{{$data['merit_list_student_id']}}" />
     @include("$section.admission_form_profile_details")
     @include("$section.admission_form_contact_details")
     @include("$section.admission_form_applied_details")

@@ -9,10 +9,9 @@ class MeritListStudent extends Model
 {
     use HasFactory;
     protected $table = 'merit_list_students';
-    protected $fillable = [
-        'email',
-        'name',
-        'res_no',
-        'file_id '
-    ];
+
+    public function file()
+    {
+        return $this->belongsTo(MeritListFile::class, 'file_id', 'id');
+    }
 }

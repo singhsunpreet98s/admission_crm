@@ -1,44 +1,11 @@
 @extends('layouts.student')
 
 @section('content')
-<div class="container-fluid" style="border:1px solid #dc3545;padding:20px;border-radius:5px">
-   <h5 class="mb-3 text-danger"><strong>Upload Profile Photo & Signature</strong></h5>
 
-   <form id="uploadForm" action="{{ route('students.uploadPhotoSignature') }}" method="POST" enctype="multipart/form-data">
-      @csrf
-      
-      <div class="row">
-         <!-- Profile Photo Upload -->
-         <div class="col-md-6 mb-3">
-            <label for="profile_photo" class="form-label">Profile Photo (Max 100KB)</label>
-            <input class="form-control" type="file" name="profile_photo" id="profile_photo" accept="image/*">
-            <div class="mt-2">
-               <img id="profilePreview" class="img-fluid" style="max-width:150px; border:1px solid #ddd; border-radius:5px; padding:5px;">
-            </div>
-            <canvas id="profileCanvas" style="display:none;"></canvas>
-         </div>
-
-         <!-- Signature Upload -->
-         <div class="col-md-6 mb-3">
-            <label for="signature" class="form-label">Signature (Max 100KB)</label>
-            <input class="form-control" type="file" name="signature" id="signature" accept="image/*">
-            <div class="mt-2">
-               <img id="signaturePreview" class="img-fluid" style="max-width:150px; border:1px solid #ddd; border-radius:5px; padding:5px;">
-            </div>
-            <canvas id="signatureCanvas" style="display:none;"></canvas>
-         </div>
-      </div>
-
-      <div class="text-end">
-         <button type="submit" class="btn btn-danger">Upload</button>
-      </div>
-   </form>
-</div>
 @endsection
 
 @section('scripts')
 <!-- Cropper.js -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 let profileCropper, signatureCropper;

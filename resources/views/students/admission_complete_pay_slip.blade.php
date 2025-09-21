@@ -8,7 +8,19 @@
          size: A4;
          margin: 20mm;
       }
+      .container, 
+      .container table, 
+      .container h4, 
+      .container p, 
+      .container img {
+         page-break-inside: avoid;
+         break-inside: avoid;
+      }
 
+      .declaration {
+         page-break-inside: avoid;
+         break-inside: avoid;
+      }
       body {
          font-family: Arial, sans-serif;
          font-size: 12px;
@@ -16,6 +28,27 @@
          margin: 0;
          padding: 0;
          background: #fff;
+          zoom: 0.95; 
+      }
+
+      .actions {
+         text-align: center;
+         margin: 10px 0;
+      }
+
+      .actions button {
+         background: #dc3545;
+         color: #fff;
+         border: none;
+         padding: 8px 15px;
+         margin: 0 5px;
+         border-radius: 4px;
+         cursor: pointer;
+         font-size: 13px;
+      }
+
+      .actions button:hover {
+         background: #b02a37;
       }
 
       .container {
@@ -77,10 +110,23 @@
          line-height: 1.4;
          text-align: justify;
       }
+
+      /* Hide buttons in print */
+      @media print {
+         .actions {
+            display: none;
+         }
+      }
    </style>
 </head>
 
 <body>
+   <!-- Buttons -->
+   <div class="actions">
+      <button onclick="window.print()">Print</button>
+      <button onclick="saveAsPDF()">Save as PDF</button>
+   </div>
+
    <div style="text-align: center; margin-bottom: 10px;">
       <img src="https://urcollege.in/images/URC_ICON/urcc_logo.jpg" style="height: 80px;">
    </div>
@@ -88,7 +134,6 @@
    <h2>FEE RECEIPT FOR {{$data['title']}} ADMISSION</h2>
 
    <div class="container">
-
       <!-- Basic Details -->
       <h4>Basic Details</h4>
       <table>
@@ -172,5 +217,20 @@
          the details furnished by me in this form for complying with the admission formalities.
       </p>
    </div>
+
+   <!-- JS for Save as PDF -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+   <script>
+      function saveAsPDF() {
+         const element = document.body.cloneNode(true);
+         element.querySelector('.actions')?.remove(); // remove buttons in PDF
+         html2pdf().from(element).set({
+            margin: 10,
+            filename: 'Fee_Receipt.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         }).save();
+      }
+   </script>
 </body>
 </html>

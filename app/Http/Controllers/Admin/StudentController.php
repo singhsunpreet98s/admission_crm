@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\MeritListFile;
 use App\Models\MeritListStudent;
 use App\Services\AdmissionService;
+use App\Http\Requests\StoreAdmissionRequest;
 use App\Services\StudentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -83,11 +84,15 @@ class StudentController extends Controller
 
       $section = $this->section;
       $data = $this->studentService->getStudentFormData($request->get('res_no'));
+      // return response()->json($data);
       return view("$section.admission_from")->with(compact('section', 'data'));
    }
-   public function saveForm(Request  $request)
+   public function saveForm(StoreAdmissionRequest $request)
    {
-      $result = $this->admissionService->storeAdmission($request->all());
+
+      $validated = $request->validated();
+
+      $result = $this->admissionService->storeAdmission($validated, $request);
 
       if ($result['status']) {
          return response()->json($result, 201);

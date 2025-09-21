@@ -16,6 +16,7 @@ use App\Models\StudentOtherDocuments;
 use App\Models\StudentOtherInfo;
 use App\Models\StudentPersonalDetails;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -25,70 +26,64 @@ use Psy\Command\HistoryCommand;
 
 class AdmissionService
 {
-   private function createUser($data): User
+   private function createUser(array $data): User
    {
       $user = new User();
       $user->email =  $data['email'];
       $user->name = $data['student_name'];
-      $user->password = bcrypt($data['ureg_no']);
-      $user->category_id = $data['category'];
-      $user->university_reg_no  = $data['ureg_no'];
+      $user->password = bcrypt($data['aadhar']);
+      $user->category_id = is_numeric($data['category']) ? (int) $data['category'] : null;
+      $user->university_reg_no  = $data['ureg_no'] ?? null;
       $user->role = "student";
       $user->save();
       return $user;
    }
    private function saveSignature($file): string
    {
-      $image = Image::make($file)
-         ->encode('jpg', 80);
-      $photoPath = 'students/signatures/' . uniqid() . '.jpg';
-      Storage::disk('public')->put($photoPath, (string) $image);
-      return $photoPath;
+      $image = Image::make($file)->encode('jpg', 80);
+      $path = 'students/signatures/' . uniqid('', true) . '.jpg';
+      Storage::disk('public')->put($path, (string) $image);
+      return $path;
    }
-   private function saveDocument($file, $name, $title, $category, $user)
+   private function saveDocument($file, string $name, string $title, string $category, User $user): void
    {
       $document = new StudentDocuments();
-      $photoPath = 'students/' . $user->id . '/' . uniqid() . '.jpg';
-      Storage::disk('public')->put($photoPath, (string) $file);
+      $photoPath = 'students/' . $user->id . '/' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
+      Storage::disk('public')->put($photoPath, file_get_contents($file->getRealPath()));
       $document->title = $title;
       $document->name = $name;
       $document->category = $category;
       $document->student_id = $user->id;
       $document->file_name = $file->getClientOriginalName();
-      $document->file_size = $file->getSize();
+      $document->size = $file->getSize();
       $document->save();
    }
    private function saveProfilePhoto($file): string
    {
-      $image = Image::make($file)
-         ->encode('jpg', 80);
-      $photoPath = 'students/photos/' . uniqid() . '.jpg';
-      Storage::disk('public')->put($photoPath, (string) $image);
-      return $photoPath;
+      $image = Image::make($file)->encode('jpg', 80);
+      $path = 'students/photos/' . uniqid('', true) . '.jpg';
+      Storage::disk('public')->put($path, (string) $image);
+      return $path;
    }
    private function saveUserPersonalDetials(array $data, User $user): StudentPersonalDetails
    {
       $student = new StudentPersonalDetails();
-      $student->fathers_name = $data['father_name'];
-      $student->mothers_name = $data['mother_name'];
+      $student->fathers_name = $data['fathers_name'];
+      $student->mothers_name = $data['mothers_name'];
       $student->dob = $data['dob'];
       $student->gender = $data['gender'];
       $student->categoryid = $data['category'];
       $student->user_id = $user->id;
       $student->religion = $data['relegion'];
       $student->aadhar_no = $data['aadhar'];
-      $student->has_ews = $data['ews'] === 'Yes';
+      $student->has_ews = ($data['ews'] ?? 'No') === 'Yes';
       $student->disabled_category = $data['reservation'];
       $student->mobile = $data['phone'];
       $student->address = $data['caddress'];
       $student->state = $data['cstate'];
       $student->district = $data['cdistrict'];
       $student->pincode = $data['cpin'];
-      $student->profile_photo = $this->saveProfilePhoto($data['profile_photo']);
-      $student->signature = $this->saveSignature($data['signature']);
-      if ($student->has_ews) {
-         $this->saveDocument($data['ews_certificate'], 'ews', 'EWS Document', 'personal', $user);
-      }
+      // profile and signature handled outside via files
       return $student;
    }
    protected function saveBankDetials(array $data, User $user): BankDetails
@@ -111,7 +106,7 @@ class AdmissionService
       $history->name = "martix";
       $history->title = "10th";
       $history->total_marks = $data['MaxMarks10'];
-      $history->marks_obtained = $data['MarksObt10Per'];
+      $history->marks_obtained = $data['MarksObt10'];
       return $history;
    }
    protected function saveIntermediateEducationHistory(array $data, User $user): EducationHistory
@@ -121,7 +116,7 @@ class AdmissionService
       $history->roll_code = $data['RollCode12'];
       $history->passing_year = $data['PassYear12'];
       $history->board = $data['Board12'];
-      $history->stream = $data['stream'];
+      $history->stream = $data['xii_stream'];
       $history->name = "intermediate";
       $history->title = "12th";
       $history->total_marks = $data['MaxMarks12'];
@@ -129,12 +124,12 @@ class AdmissionService
       return $history;
    }
 
-   protected function processAdmission(array $data, User $user)
+   protected function processAdmission(array $data, User $user): Admission
    {
       $courseFees = CourseFees::where('semester_id', $data['semester_id'])->first();
       if (empty($courseFees)) throw new NotFoundException("Course Fees not added");
       $fees = $courseFees->amount;
-      if ($data['gender'] !== 'female') {
+      if (strtoupper($data['gender']) !== 'FEMALE') {
          $fees = $fees + 100;
       }
       $admission = new Admission();
@@ -156,25 +151,67 @@ class AdmissionService
       $admission->total_amount = $fees + $admission->tax;
       return $admission;
    }
-   public function storeAdmission(array $data): array
+   public function storeAdmission(array $data, Request $request): array
    {
       try {
-
          beginTransaction();
+
          $user = $this->createUser($data);
+
+         // Personal details + files
          $personalDetails = $this->saveUserPersonalDetials($data, $user);
-         $this->saveBankDetials($data, $user);
-         $this->saveMatrixEducationHistory($data, $user);
-         $this->saveIntermediateEducationHistory($data, $user);
-         $this->processAdmission($data, $user);
+         if ($request->hasFile('profile_photo')) {
+            $personalDetails->profile_photo = $this->saveProfilePhoto($request->file('profile_photo'));
+         }
+         if ($request->hasFile('signature')) {
+            $personalDetails->signature = $this->saveSignature($request->file('signature'));
+         }
+         $personalDetails->save();
+
+         // Optional documents
+         if (($data['ews'] ?? 'No') === 'Yes' && $request->hasFile('ews_certificate')) {
+            $this->saveDocument($request->file('ews_certificate'), 'ews', 'EWS Document', 'personal', $user);
+         }
+         if (($data['reservation'] ?? '') !== 'NA' && $request->hasFile('reservation_certificate')) {
+            $this->saveDocument($request->file('reservation_certificate'), 'reservation', 'Disability Certificate', 'personal', $user);
+         }
+
+         // Academic documents
+         if ($request->hasFile('marksheet12')) {
+            $this->saveDocument($request->file('marksheet12'), 'marksheet12', '12th Marksheet', 'academic', $user);
+         }
+         if ($request->hasFile('certificate12')) {
+            $this->saveDocument($request->file('certificate12'), 'certificate12', '12th Certificate', 'academic', $user);
+         }
+         if ($request->hasFile('clc')) {
+            $this->saveDocument($request->file('clc'), 'clc', 'CLC', 'academic', $user);
+         }
+         if ($request->hasFile('migration12')) {
+            $this->saveDocument($request->file('migration12'), 'migration12', 'Migration Certificate', 'academic', $user);
+         }
+
+         // Bank details
+         $bank = $this->saveBankDetials($data, $user);
+         $bank->save();
+
+         // Education histories
+         $matrix = $this->saveMatrixEducationHistory($data, $user);
+         $matrix->student_id = $user->id;
+         $matrix->save();
+         $inter = $this->saveIntermediateEducationHistory($data, $user);
+         $inter->student_id = $user->id;
+         $inter->save();
+
+         // Admission
+         $admission = $this->processAdmission($data, $user);
+         $admission->save();
+
          commitTransaction();
          Auth::login($user, true);
-
-
          return [
             'status' => true,
             'message' => 'Admission successfully saved.',
-            'admission_id' => 1,
+            'admission_id' => $admission->id,
          ];
       } catch (\Exception $e) {
          rollbackTransaction();

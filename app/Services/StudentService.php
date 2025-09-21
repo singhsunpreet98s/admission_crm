@@ -7,23 +7,26 @@ use App\Models\Course;
 use App\Models\MeritListStudent;
 use App\Models\Semester;
 use App\Models\Subject;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Exception\NotFoundException;
 
 class StudentService
 {
-   private function getCatgory(string $category): array
+   private function getCatgory(string $category): Collection
    {
       if (empty($category) || $category === "") return Category::pluck('name', 'id');
-      $categories = Category::where('name', $category)->pluck('name', 'id');
-      if (!empty($categories)) return [];
+      $categories = Category::where(DB::raw('LOWER(name)'), strtolower($category))->pluck('name', 'id');
+
+      if ($categories->isNotEmpty()) return $categories;
       return $this->getCatgory("");
    }
 
-   private function getSubjects(string $subject, int $semesterId): array
+   private function getSubjects(string $subject, int $semesterId): Collection
    {
       if (empty($subject) || $subject === "") return Subject::where('semester_id', $semesterId)->pluck('name', 'id');
-      $subjects = Subject::where('name', $subject)->where('semester_id', $semesterId)->pluck('name', 'id');
-      if (!empty($subjects)) return [];
+      $subjects = Subject::where(DB::raw('LOWER(name)'), strtolower($subject))->where('semester_id', $semesterId)->pluck('name', 'id');
+      if ($subjects->isNotEmpty()) return $subjects;
       return $this->getSubjects("", $semesterId);
    }
 
@@ -43,6 +46,8 @@ class StudentService
    {
       $studentRegistrationData = MeritListStudent::where('res_no', $resNo)
          ->with('file')->first();
+      // $course = Course::where(DB::raw('name'),strtolower($studentRegistrationData->faculty))
+      //  ->select('id', 'name', 'program_name')->first();
       $course = Course::where('id', $studentRegistrationData->file->course_id)
          ->select('id', 'name', 'program_name')->first();
       $semester = Semester::where('id', $studentRegistrationData->file->semester_id)
